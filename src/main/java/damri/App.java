@@ -25,7 +25,7 @@ public class App {
 
         Distribution distribution = getDistribution(column, speciesToTaxonomy);
 
-        System.out.println("Hi");
+        System.out.println(distribution.summarize(taxonomy));
     }
 
 
@@ -41,13 +41,12 @@ public class App {
                 for (Integer taxonId : taxons) {
                     Taxon taxon = distribution.get(taxonId);
                     if (taxon == null) {
-                        distribution.put(taxonId, new Taxon());
+                        distribution.put(taxonId, new Taxon(taxonId));
                         taxon = distribution.get(taxonId);
                     }
                     taxon.addData(letter, data.getOrganism(), data.getGeneId());
                 }
             } catch (Exception e) {
-                e.printStackTrace();
             }
         }
         return new Distribution(distribution);

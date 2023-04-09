@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 public class Taxon {
+    private Integer id;
     private Map<Character, List<String>> letterToSpecies;
     private Integer countOfSequences;
-    public Taxon() {
+    public Taxon(Integer id) {
+        this.id = id;
         this.letterToSpecies = new HashMap<>();
         countOfSequences = 0;
     }
@@ -31,5 +33,9 @@ public class Taxon {
 
     public Integer getCountOfSequences() {
         return countOfSequences;
+    }
+
+    public Integer getId() {
+        return id;
     }
 }
