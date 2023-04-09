@@ -16,8 +16,9 @@ public class App {
         String taxonomyFile = "/Users/adr/programming/orthologyviewer/src/test/resources/odb11v0_levels.tab";
         Map<String, List<Integer>> speciesToTaxonomy = parseLevel2Species(speciesToTaxonomyFile);
         Map<Integer, String> taxonomy = parseLevel(taxonomyFile);
-
         Map<String, String> alignment = readFastaFile(alignmentFile);
+        Map<Integer, String> taxonomyAdd = getTaxonomyDataFromAlignment(alignment);
+        taxonomy.putAll(taxonomyAdd);
         String withDashes = alignment.get(sequenceId);
         String noDashes = withDashes.replaceAll("-", "");
         int alignmentPosition = getSymbolIndexWithDashes(noDashes, letterNumber, withDashes);
@@ -50,6 +51,19 @@ public class App {
             }
         }
         return new Distribution(distribution);
+    }
+
+    public static Map<Integer, String> getTaxonomyDataFromAlignment(Map<String, String> alignment){
+        Map<Integer, String> idToName = new HashMap<Integer, String>();
+        for (String name : alignment.keySet()) {
+            try {
+                SequenceData data = SequenceData.fromString(name);
+                idToName.put(Integer.parseInt(data.getTaxonId().replaceAll("_0", "")),
+                        data.getOrganism());
+            } catch (Exception e) {
+            }
+        }
+        return idToName;
     }
 
     public static Map<String, String> readFastaFile(String fastaFilePath) {
