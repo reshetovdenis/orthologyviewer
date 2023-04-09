@@ -4,10 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class App {
     public static void main(String[] args) throws IOException {
@@ -21,14 +19,44 @@ public class App {
 
         Map<String, String> alignment = readFastaFile(alignmentFile);
         String withDashes = alignment.get(sequenceId);
-        String noDashes = withDashes.replaceAll("-","");
+        String noDashes = withDashes.replaceAll("-", "");
         int alignmentPosition = getSymbolIndexWithDashes(noDashes, letterNumber, withDashes);
         Map<String, Character> column = getColumnData(alignment, alignmentPosition);
 
+        Map<Integer, Map<Character, List<String>>> distribution = getDistribution(column, speciesToTaxonomy);
+        System.out.println("Hi");
+    }
 
-        for(String name : column.keySet()){
-            System.out.println(column.get(name) + "\t" + name);
+    public static Map<Integer, Map<Character, List<String>>> getDistribution(Map<String, Character> column, Map<String, List<Integer>> speciesToTaxonomy){
+        Map<Integer, Map<Character, List<String>>> distribution = new HashMap<Integer, Map<Character, List<String>>>();
+
+        for (String name : column.keySet()) {
+            Character letter = column.get(name);
+            try {
+                SequenceData data = SequenceData.fromString(name);
+                List<Integer> taxons = speciesToTaxonomy.get(data.getTaxonId());
+
+                for (Integer taxon : taxons) {
+                    Map<Character, List<String>> map = distribution.get(taxon);
+                    if (map == null) {
+                        distribution.put(taxon, new HashMap<>());
+                        map = distribution.get(taxon);
+                    }
+                    List<String> species = map.get(letter);
+                    if (species == null) {
+                        map.put(letter, new ArrayList<>());
+                        species = map.get(letter);
+                    }
+                    species.add(
+                            String.format("%s (%s)",
+                                    data.getOrganism(), data.getGeneId()))
+                    ;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+        return distribution;
     }
 
     public static Map<String, String> readFastaFile(String fastaFilePath) {
@@ -61,6 +89,7 @@ public class App {
 
         return sequences;
     }
+
     public static Map<String, Character> getColumnData(Map<String, String> sequences, int alignmentColumn) {
         Map<String, Character> columnData = new HashMap<>();
         for (String key : sequences.keySet()) {

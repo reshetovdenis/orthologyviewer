@@ -73,7 +73,7 @@ public class AppTest {
 
     @Test
     public void testNameToData() throws IOException {
-        SequenceData expected = new SequenceData(9447, "Lemur catta", "123638021", "cytoplasmic FMR1-interacting protein 2");
+        SequenceData expected = new SequenceData("9447_0", "Lemur catta", "123638021", "cytoplasmic FMR1-interacting protein 2");
         SequenceData actual = SequenceData.fromString(">9447_0:001c71 {\"pub_og_id\":\"446059at2759\",\"og_name\":\"cytoplasmic FMR1 interacting protein 1 \",\"level_taxid\":2759,\"organism_taxid\":\"9447_0\",\"organism_name\":\"Lemur catta\",\"pub_gene_id\":\"123638021\",\"description\":\"cytoplasmic FMR1-interacting protein 2\"}");
         Assert.assertEquals(actual.getTaxonId(), expected.getTaxonId());
         Assert.assertEquals(actual.getOrganism(), expected.getOrganism());
