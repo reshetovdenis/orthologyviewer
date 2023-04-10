@@ -27,7 +27,11 @@ public class SequenceData {
         String taxonId = jsonNode.get("organism_taxid").asText();
         String organism = jsonNode.get("organism_name").asText();
         String geneId = jsonNode.get("pub_gene_id").asText();
-        String geneDescription = jsonNode.get("description").asText();
+
+        String geneDescription = "";
+        if(jsonNode.get("description") != null){
+            geneDescription = jsonNode.get("description").asText();
+        }
         SequenceData result = new SequenceData(taxonId, organism, geneId, geneDescription);
         return result;
     }
